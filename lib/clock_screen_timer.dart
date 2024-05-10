@@ -5,11 +5,14 @@ class ClockScreenTimer extends StatelessWidget {
   final bool isTicking;
   final bool isTimeUp;
 
+  final Duration availableTime;
+
   const ClockScreenTimer({
     Key? key,
     this.isReversed = false,
     this.isTicking = false,
     this.isTimeUp = false,
+    required this.availableTime,
   }) : super(key: key);
 
   Color? _getColor() {
@@ -22,6 +25,10 @@ class ClockScreenTimer extends StatelessWidget {
     return Colors.black.withAlpha(30);
   }
 
+  String _getAvailableTimeText() {
+    return availableTime.toString().substring(2, 7);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,7 +37,7 @@ class ClockScreenTimer extends StatelessWidget {
         child: RotatedBox(
           quarterTurns: isReversed ? 2 : 0,
           child: Text(
-            "00.05",
+            _getAvailableTimeText(),
             style: TextStyle(
               fontSize: 70,
             ),

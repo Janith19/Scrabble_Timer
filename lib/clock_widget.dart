@@ -10,9 +10,13 @@ class ClockWidget extends StatelessWidget {
           Expanded(
             child: ClockScreenTimer(
               isReversed: true,
+              availableTime: Duration(minutes: 5, seconds: 10),
             ),
           ),
-          Expanded(child: ClockScreenTimer()),
+          Expanded(
+              child: ClockScreenTimer(
+            availableTime: Duration(minutes: 5, seconds: 10),
+          )),
         ],
       ),
     );

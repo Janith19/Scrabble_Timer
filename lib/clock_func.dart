@@ -6,18 +6,27 @@ class ClockFunc {
   num _millisElapsed = 0;
 
   final Function getNowMillis;
-  final int timeControlMillis;
+  int timeControlMillis;
+  final int incrementsMillis;
 
   ClockFunc({
     required this.getNowMillis,
     required this.timeControlMillis,
+    this.incrementsMillis = 0,
   });
 
   void start() {
+    if (_startedAt != -1) {
+      return;
+    }
     _startedAt = getNowMillis();
   }
 
   void pause() {
+    if (_startedAt == -1) {
+      return;
+    }
+    timeControlMillis += incrementsMillis;
     _millisElapsed += (getNowMillis() - _startedAt)!;
     _startedAt = -1;
   }
@@ -30,14 +39,15 @@ class ClockFunc {
   }
 
   bool isTicking() {
-    return _startedAt != -1;
+    return !isTimeUp() && _startedAt != -1;
   }
 
-  bool isTimeUp(){
-    return getAvailableMillis() <=
+  bool isTimeUp() {
+    return getAvailableMillis() <= 0;
   }
 
   num getAvailableMillis() {
-    return timeControlMillis - getMillisElapsed();
+    final num availableMillis = timeControlMillis - getMillisElapsed();
+    return availableMillis > 0 ? availableMillis : 0;
   }
 }

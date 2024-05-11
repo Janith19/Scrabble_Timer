@@ -1,4 +1,4 @@
-import 'package:scrabble_timer/clock_func.dart';
+import 'package:scrabble_timer/clock_func-NOUSE.dart';
 import 'package:test/test.dart';
 
 void main() {

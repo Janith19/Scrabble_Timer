@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'clock_widget.dart'; // Import your ClockWidget class from another file
+import 'package:scrabble_timer/Components/scrabbletimer.dart';
+
+void main() {
+  runApp(HomeScreen());
+}
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Scrabble Clock'),
+    return MaterialApp(
+      title: 'Scrabble Timer',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
-      body: ClockWidget(), // Specify the ClockWidget as the body content
+      home: ScrabbleTimer(),
     );
   }
 }

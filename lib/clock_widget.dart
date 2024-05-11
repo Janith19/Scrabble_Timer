@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:scrabble_timer/Components/clockbuttons.dart';
 import 'package:scrabble_timer/clock_func.dart';
 import 'package:scrabble_timer/clock_screen_timer.dart';
 
@@ -63,6 +64,7 @@ class _ClockWidgetState extends State<ClockWidget> {
               ),
             ),
           ),
+          ClockButtons(),
           Expanded(
               child: ClockScreenTimer(
             onPressed: _onBottomPressed,

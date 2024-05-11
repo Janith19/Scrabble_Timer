@@ -87,7 +87,7 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: Clock(
@@ -95,16 +95,18 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                 seconds: _seconds1,
                 onStart: () {
                   if (!_paused) {
-                    _startTimer(1);
+                    _startTimer(2);
                   } else {
                     _resumeTimers();
                   }
                 },
               ),
             ),
-            ControlButtons(
-              onPause: _pauseTimers,
-              onReset: _resetTimers,
+            Expanded(
+              child: ControlButtons(
+                onPause: _pauseTimers,
+                onReset: _resetTimers,
+              ),
             ),
             Expanded(
               child: Clock(
@@ -112,7 +114,7 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                 seconds: _seconds2,
                 onStart: () {
                   if (!_paused) {
-                    _startTimer(2);
+                    _startTimer(1);
                   } else {
                     _resumeTimers();
                   }

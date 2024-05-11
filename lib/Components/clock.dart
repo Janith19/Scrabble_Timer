@@ -9,10 +9,10 @@ class Clock extends StatelessWidget {
       {required this.seconds, required this.onStart, required this.isReversed});
 
   String _formatTime(int timeInSeconds) {
-    int hours = timeInSeconds ~/ 3600;
+    //int hours = timeInSeconds ~/ 3600;
     int minutes = (timeInSeconds % 3600) ~/ 60;
     int seconds = timeInSeconds % 60;
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override

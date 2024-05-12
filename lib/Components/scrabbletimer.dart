@@ -6,8 +6,10 @@ import 'control_buttons.dart';
 
 class ScrabbleTimer extends StatefulWidget {
   final int playerTime;
+  final int overtimeLimit; // New field for overtime limit
 
-  ScrabbleTimer({Key? key, this.playerTime = 25}) : super(key: key);
+  ScrabbleTimer({Key? key, this.playerTime = 25, this.overtimeLimit = 5})
+      : super(key: key);
 
   @override
   _ScrabbleTimerState createState() => _ScrabbleTimerState();
@@ -43,7 +45,11 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
     _timer1?.cancel();
     _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        _seconds1--;
+        if (_seconds1 <= -widget.overtimeLimit * 60) {
+          _timer1?.cancel();
+        } else {
+          _seconds1--;
+        }
       });
     });
     _timer2?.cancel();
@@ -53,7 +59,11 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
     _timer2?.cancel();
     _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        _seconds2--;
+        if (_seconds2 <= -widget.overtimeLimit * 60) {
+          _timer2?.cancel();
+        } else {
+          _seconds2--;
+        }
       });
     });
     _timer1?.cancel();

@@ -12,7 +12,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 1; // Set initial index to 1 (for Timer)
-  int _playerTime = 25; // Default player time in minutes
+  int _playerTime = 25;
+  int _overtimeLimit = 5; // Default player time in minutes
 
   late List<Widget> _widgetOptions; // Declare _widgetOptions
 
@@ -22,7 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _widgetOptions = [
       AboutScreen(), // Your AboutScreen widget
-      ScrabbleTimer(playerTime: _playerTime), // Your ScrabbleTimer widget
+      ScrabbleTimer(
+        playerTime: _playerTime,
+        overtimeLimit: _overtimeLimit, // Pass the overtime limit value
+      ), // Your ScrabbleTimer widget
       SettingsScreen(
         onPlayerTimeChanged: _updatePlayerTime,
         onOvertimeLimitChanged: (int) {},
@@ -34,6 +38,13 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _playerTime = newTime;
       _widgetOptions[1] = ScrabbleTimer(playerTime: _playerTime);
+    });
+  }
+
+  void _updateOvertimeLimit(int newTime) {
+    setState(() {
+      _overtimeLimit = newTime;
+      _widgetOptions[1] = ScrabbleTimer(overtimeLimit: _overtimeLimit);
     });
   }
 

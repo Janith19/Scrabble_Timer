@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'clock.dart';
 import 'control_buttons.dart';
-import 'dart:async';
 
 class ScrabbleTimer extends StatefulWidget {
+  final int playerTime; // Add this field
+
+  ScrabbleTimer({Key? key, this.playerTime = 5}) : super(key: key);
+
   @override
   _ScrabbleTimerState createState() => _ScrabbleTimerState();
 }
@@ -11,58 +15,61 @@ class ScrabbleTimer extends StatefulWidget {
 class _ScrabbleTimerState extends State<ScrabbleTimer> {
   Timer? _timer1;
   Timer? _timer2;
-  int _seconds1 = 0;
-  int _seconds2 = 0;
+  late int _playerTime;
+  late int _seconds1;
+  late int _seconds2;
   bool _paused = false;
 
-  void _startTimer(int timerNumber) {
-    if (timerNumber == 1) {
-      if (_timer1 == null || !_timer1!.isActive) {
-        _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
-          setState(() {
-            _seconds1++;
-          });
-        });
-      }
-      if (_timer2 != null) {
-        _timer2!.cancel();
-      }
-    } else {
-      if (_timer2 == null || !_timer2!.isActive) {
-        _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
-          setState(() {
-            _seconds2++;
-          });
-        });
-      }
-      if (_timer1 != null) {
-        _timer1!.cancel();
-      }
-    }
+  @override
+  void initState() {
+    super.initState();
+    _playerTime = widget.playerTime;
+    _seconds1 = _playerTime * 60;
+    _seconds2 = _playerTime * 60;
+  }
+
+  void _updatePlayerTime(int time) {
+    setState(() {
+      _playerTime = time;
+      _seconds1 = _playerTime * 60;
+      _seconds2 = _playerTime * 60;
+    });
+  }
+
+  void _startTimer1() {
+    _timer1?.cancel();
+    _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _seconds1--;
+      });
+    });
+    _timer2?.cancel();
+  }
+
+  void _startTimer2() {
+    _timer2?.cancel();
+    _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _seconds2--;
+      });
+    });
+    _timer1?.cancel();
   }
 
   void _pauseTimers() {
-    if (_timer1 != null && _timer1!.isActive) {
-      _timer1!.cancel();
-    }
-    if (_timer2 != null && _timer2!.isActive) {
-      _timer2!.cancel();
-    }
+    _timer1?.cancel();
+    _timer2?.cancel();
     setState(() {
       _paused = true;
     });
   }
 
   void _resetTimers() {
-    if (_timer1 != null && _timer1!.isActive) {
-      _timer1!.cancel();
-    }
-    if (_timer2 != null && _timer2!.isActive) {
-      _timer2!.cancel();
-    }
+    _timer1?.cancel();
+    _timer2?.cancel();
     setState(() {
-      _seconds1 = 0;
-      _seconds2 = 0;
+      _seconds1 = _playerTime * 60;
+      _seconds2 = _playerTime * 60;
       _paused = false;
     });
   }
@@ -72,22 +79,17 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
       _paused = false;
     });
     if (_seconds1 > 0) {
-      _startTimer(1);
-    }
-    if (_seconds2 > 0) {
-      _startTimer(2);
+      _startTimer1();
+    } else if (_seconds2 > 0) {
+      _startTimer2();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Scrabble Timer'),
-      ),
       body: Center(
         child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: Clock(
@@ -95,9 +97,9 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                 seconds: _seconds1,
                 onStart: () {
                   if (!_paused) {
-                    _startTimer(2);
+                    _startTimer2();
                   } else {
-                    _resumeTimers();
+                    _startTimer2();
                   }
                 },
               ),
@@ -114,9 +116,9 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                 seconds: _seconds2,
                 onStart: () {
                   if (!_paused) {
-                    _startTimer(1);
+                    _startTimer1();
                   } else {
-                    _resumeTimers();
+                    _startTimer1();
                   }
                 },
               ),

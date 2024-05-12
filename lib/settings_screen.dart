@@ -1,10 +1,14 @@
+// settings_screen.dart
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final void Function(int) onPlayerTimeChanged; // Callback function
+  final void Function(int) onPlayerTimeChanged;
+  final void Function(int) onOvertimeLimitChanged;
 
-  SettingsScreen({required this.onPlayerTimeChanged});
+  SettingsScreen({
+    required this.onPlayerTimeChanged,
+    required this.onOvertimeLimitChanged,
+  });
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -12,22 +16,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   int _playerTime = 25; // Default player time in minutes
-
-  void _updatePlayerTime() {
-    // Show toast message
-    Fluttertoast.showToast(
-      msg: 'Player time updated to $_playerTime minutes',
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.grey[700],
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-
-    // Pass the entered value to the callback function
-    widget.onPlayerTimeChanged(_playerTime);
-  }
+  int _overtimeLimit = 5; // Default overtime limit in minutes
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +40,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ElevatedButton(
                   onPressed: () {
                     widget.onPlayerTimeChanged(_playerTime);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content:
-                            Text('Player time updated to $_playerTime minutes'),
-                      ),
-                    );
                   },
                   child: Text('Save'),
                 ),
@@ -73,6 +56,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
               decoration: InputDecoration(
                 hintText: 'Enter time for each player',
+              ),
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    'Overtime Limit (in minutes):',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    widget.onOvertimeLimitChanged(_overtimeLimit);
+                  },
+                  child: Text('Save'),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              initialValue: _overtimeLimit.toString(),
+              onChanged: (value) {
+                setState(() {
+                  _overtimeLimit = int.tryParse(value) ?? 0;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Enter overtime limit',
               ),
             ),
             SizedBox(height: 16),

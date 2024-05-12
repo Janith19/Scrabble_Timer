@@ -1,32 +1,93 @@
+// clock.dart
 import 'package:flutter/material.dart';
 
-class Clock extends StatelessWidget {
-  final int seconds;
-  final Function onStart;
+class Clock extends StatefulWidget {
   final bool isReversed;
+  final int seconds;
+  final int overtimeLimit;
+  final VoidCallback onStart;
 
-  Clock(
-      {required this.seconds, required this.onStart, required this.isReversed});
+  const Clock({
+    Key? key,
+    required this.isReversed,
+    required this.seconds,
+    required this.overtimeLimit,
+    required this.onStart,
+  }) : super(key: key);
 
-  String _formatTime(int timeInSeconds) {
-    //int hours = timeInSeconds ~/ 3600;
-    int minutes = (timeInSeconds % 3600) ~/ 60;
-    int seconds = timeInSeconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  @override
+  _ClockState createState() => _ClockState();
+}
+
+class _ClockState extends State<Clock> {
+  late int _remainingSeconds;
+
+  @override
+  void initState() {
+    super.initState();
+    _remainingSeconds = widget.seconds;
+  }
+
+  @override
+  void didUpdateWidget(covariant Clock oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.seconds != _remainingSeconds) {
+      setState(() {
+        _remainingSeconds = widget.seconds;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: onStart as void Function()?,
-        child: Container(
-          child: RotatedBox(
-            quarterTurns: isReversed ? 2 : 0,
-            child: Text(
-              _formatTime(seconds),
-              style: TextStyle(fontSize: 70),
-            ),
-          ),
-        ));
+      onTap: widget.onStart,
+      child: Center(
+        child: CountdownText(
+          isReversed: widget.isReversed,
+          seconds: _remainingSeconds,
+          overtimeLimit: widget.overtimeLimit,
+        ),
+      ),
+    );
+  }
+}
+
+class CountdownText extends StatelessWidget {
+  final bool isReversed;
+  final int seconds;
+  final int overtimeLimit;
+
+  const CountdownText({
+    Key? key,
+    required this.isReversed,
+    required this.seconds,
+    required this.overtimeLimit,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    int remainingSeconds = seconds;
+    final isNegative = seconds < 0;
+
+    if (isNegative) {
+      remainingSeconds = (seconds.abs() % (overtimeLimit * 60));
+    } else if (remainingSeconds == 0) {
+      remainingSeconds = 0;
+    }
+
+    final minutes = remainingSeconds ~/ 60;
+    remainingSeconds = remainingSeconds % 60;
+
+    return Text(
+      isReversed
+          ? '${isNegative ? '-' : ''}${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}'
+          : '${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}${isNegative ? '-' : ''}',
+      style: TextStyle(
+        fontSize: 50.0,
+        fontWeight: FontWeight.bold,
+        color: isNegative ? Colors.red : Colors.black,
+      ),
+    );
   }
 }

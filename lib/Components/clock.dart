@@ -1,10 +1,10 @@
-// clock.dart
 import 'package:flutter/material.dart';
 
-class Clock extends StatefulWidget {
+class Clock extends StatelessWidget {
   final bool isReversed;
   final int seconds;
   final int overtimeLimit;
+  final int penalty;
   final VoidCallback onStart;
 
   const Clock({
@@ -12,41 +12,60 @@ class Clock extends StatefulWidget {
     required this.isReversed,
     required this.seconds,
     required this.overtimeLimit,
+    required this.penalty,
     required this.onStart,
   }) : super(key: key);
 
   @override
-  _ClockState createState() => _ClockState();
-}
-
-class _ClockState extends State<Clock> {
-  late int _remainingSeconds;
-
-  @override
-  void initState() {
-    super.initState();
-    _remainingSeconds = widget.seconds;
-  }
-
-  @override
-  void didUpdateWidget(covariant Clock oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.seconds != _remainingSeconds) {
-      setState(() {
-        _remainingSeconds = widget.seconds;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onStart,
-      child: Center(
-        child: CountdownText(
-          isReversed: widget.isReversed,
-          seconds: _remainingSeconds,
-          overtimeLimit: widget.overtimeLimit,
+      onTap: onStart,
+      child: Container(
+        height: double.infinity,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child:
+                  SizedBox(), // Empty expanded widget to spread to the first half
+            ),
+            Expanded(
+              flex: 2, // Takes 2 parts out of 3 parts of the row
+              child: Container(
+                height: double.infinity,
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Center(
+                          child: Text(
+                            'Timer', // Display any text or content you want here
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    CountdownText(
+                      isReversed: isReversed,
+                      seconds: seconds,
+                      overtimeLimit: overtimeLimit,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child:
+                  SizedBox(), // Empty expanded widget to spread to the second half
+            ),
+          ],
         ),
       ),
     );
@@ -83,6 +102,7 @@ class CountdownText extends StatelessWidget {
       isReversed
           ? '${isNegative ? '-' : ''}${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}'
           : '${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}${isNegative ? '-' : ''}',
+      textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 50.0,
         fontWeight: FontWeight.bold,

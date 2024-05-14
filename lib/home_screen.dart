@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrabble_timer/Components/scrabbletimer.dart';
 import 'about_screen.dart'; // Import your AboutScreen widget
 import 'settings_screen.dart'; // Import your SettingsScreen widget
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ), // Your ScrabbleTimer widget
       SettingsScreen(
         onPlayerTimeChanged: _updatePlayerTime,
-        onOvertimeLimitChanged: (int) {},
+        onOvertimeLimitChanged: _updateOvertimeLimit,
       ), // Your SettingsScreen widget
     ];
   }
@@ -39,13 +40,34 @@ class _HomeScreenState extends State<HomeScreen> {
       _playerTime = newTime;
       _widgetOptions[1] = ScrabbleTimer(playerTime: _playerTime);
     });
+    // Show toast message for player time change
+    Fluttertoast.showToast(
+      msg: "Player time updated to $_playerTime minutes",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black.withOpacity(0.8),
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   void _updateOvertimeLimit(int newTime) {
     setState(() {
       _overtimeLimit = newTime;
-      _widgetOptions[1] = ScrabbleTimer(overtimeLimit: _overtimeLimit);
+      _widgetOptions[1] = ScrabbleTimer(
+        playerTime: _playerTime,
+        overtimeLimit: _overtimeLimit,
+      );
     });
+    // Show toast message for overtime limit change
+    Fluttertoast.showToast(
+      msg: "Overtime limit updated to $_overtimeLimit minutes",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black.withOpacity(0.8),
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   void _onItemTapped(int index) {

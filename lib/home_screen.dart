@@ -14,7 +14,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 1; // Set initial index to 1 (for Timer)
   int _playerTime = 25;
-  int _overtimeLimit = 5; // Default player time in minutes
+  int _overtimeLimit = 5;
+  int _penaltyscore = 10; // Default player time in minutes
 
   late List<Widget> _widgetOptions; // Declare _widgetOptions
 
@@ -26,11 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
       AboutScreen(), // Your AboutScreen widget
       ScrabbleTimer(
         playerTime: _playerTime,
-        overtimeLimit: _overtimeLimit, // Pass the overtime limit value
+        overtimeLimit: _overtimeLimit,
+        penaltyScore: _penaltyscore, // Pass the overtime limit value
       ), // Your ScrabbleTimer widget
       SettingsScreen(
         onPlayerTimeChanged: _updatePlayerTime,
         onOvertimeLimitChanged: _updateOvertimeLimit,
+        onPenaltyTimeChanged: _updatePenaltyScore,
       ), // Your SettingsScreen widget
     ];
   }
@@ -38,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _updatePlayerTime(int newTime) {
     setState(() {
       _playerTime = newTime;
-      _widgetOptions[1] = ScrabbleTimer(playerTime: _playerTime);
+      _widgetOptions[1] = ScrabbleTimer(
+        playerTime: _playerTime,
+      );
     });
     // Show toast message for player time change
     Fluttertoast.showToast(
@@ -62,6 +67,24 @@ class _HomeScreenState extends State<HomeScreen> {
     // Show toast message for overtime limit change
     Fluttertoast.showToast(
       msg: "Overtime limit updated to $_overtimeLimit minutes",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black.withOpacity(0.8),
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void _updatePenaltyScore(int newScore) {
+    setState(() {
+      _penaltyscore = newScore;
+      _widgetOptions[1] = ScrabbleTimer(
+        penaltyScore: _penaltyscore,
+      );
+    });
+    // Show toast message for overtime limit change
+    Fluttertoast.showToast(
+      msg: "Penalty Score per minute updated to $_penaltyscore points",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: Colors.black.withOpacity(0.8),

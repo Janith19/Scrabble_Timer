@@ -5,10 +5,15 @@ import 'control_buttons.dart';
 
 class ScrabbleTimer extends StatefulWidget {
   final int playerTime;
-  int overtimeLimit; // Remove the final keyword
+  int overtimeLimit;
+  int penaltyScore; // Remove the final keyword
 
-  ScrabbleTimer({Key? key, this.playerTime = 25, this.overtimeLimit = 5})
-      : super(key: key);
+  ScrabbleTimer({
+    Key? key,
+    this.playerTime = 25,
+    this.overtimeLimit = 5,
+    this.penaltyScore = 10,
+  }) : super(key: key);
 
   @override
   _ScrabbleTimerState createState() => _ScrabbleTimerState();
@@ -30,6 +35,13 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
     _playerTime = widget.playerTime;
     _seconds1 = _playerTime * 60;
     _seconds2 = _playerTime * 60;
+  }
+
+  @override
+  void dispose() {
+    _timer1?.cancel();
+    _timer2?.cancel();
+    super.dispose();
   }
 
   void _updatePlayerTime(int time) {
@@ -54,6 +66,12 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
           _timer1?.cancel();
         } else {
           _seconds1--;
+          if (_seconds1 < 0) {
+            if (_seconds1 % 60 == 0) {
+              _penalty1 += widget.penaltyScore;
+            }
+            // Increment penalty score per minute
+          }
         }
       });
     });
@@ -68,6 +86,9 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
           _timer2?.cancel();
         } else {
           _seconds2--;
+          if (_seconds2 % 60 == 0) {
+            _penalty2 += widget.penaltyScore;
+          }
         }
       });
     });
@@ -88,6 +109,8 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
     setState(() {
       _seconds1 = _playerTime * 60;
       _seconds2 = _playerTime * 60;
+      _penalty1 = 0;
+      _penalty2 = 0;
       _paused = false;
     });
   }
@@ -137,7 +160,9 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                         child: RotatedBox(
                           quarterTurns: true ? 2 : 0,
                           child: Text(
-                            'Penalty: $_penalty1',
+                            _seconds1 == -widget.overtimeLimit * 60
+                                ? 'Disqualified'
+                                : 'Penalty: $_penalty1',
                             style: TextStyle(fontSize: 30),
                           ),
                         ),
@@ -169,7 +194,9 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Penalty: $_penalty2',
+                          _seconds2 == -widget.overtimeLimit * 60
+                              ? 'Disqualified'
+                              : 'Penalty: $_penalty2',
                           style: TextStyle(fontSize: 30),
                         ),
                       ),

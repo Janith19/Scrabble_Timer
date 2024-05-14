@@ -1,13 +1,14 @@
-// settings_screen.dart
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatefulWidget {
   final void Function(int) onPlayerTimeChanged;
   final void Function(int) onOvertimeLimitChanged;
+  final void Function(int) onPenaltyTimeChanged;
 
   SettingsScreen({
     required this.onPlayerTimeChanged,
     required this.onOvertimeLimitChanged,
+    required this.onPenaltyTimeChanged,
   });
 
   @override
@@ -16,7 +17,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   int _playerTime = 25; // Default player time in minutes
-  int _overtimeLimit = 5; // Default overtime limit in minutes
+  int _overtimeLimit = 5;
+  int _penaltyscore = 10; // Default overtime limit in minutes
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +39,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
+                GestureDetector(
+                  onTap: () {
                     widget.onPlayerTimeChanged(_playerTime);
                   },
-                  child: Text('Save'),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -67,11 +79,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
+                GestureDetector(
+                  onTap: () {
                     widget.onOvertimeLimitChanged(_overtimeLimit);
                   },
-                  child: Text('Save'),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -89,6 +111,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             SizedBox(height: 16),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    'Penalty Score',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    widget.onPenaltyTimeChanged(_penaltyscore);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              initialValue: _penaltyscore.toString(),
+              onChanged: (value) {
+                setState(() {
+                  _penaltyscore = int.tryParse(value) ?? 0;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Enter Penalty Score Per Minute',
+              ),
+            ),
           ],
         ),
       ),

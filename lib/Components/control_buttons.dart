@@ -19,12 +19,14 @@ class ControlButtons extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.pause),
           onPressed: onPause,
-          iconSize: iconSize, // Set icon size
+          iconSize: iconSize,
+          color: Colors.white, // Set icon size
         ),
         IconButton(
           icon: Icon(Icons.refresh),
           onPressed: onReset,
-          iconSize: iconSize, // Set icon size
+          iconSize: iconSize,
+          color: Colors.white, // Set icon size
         ),
       ],
     );

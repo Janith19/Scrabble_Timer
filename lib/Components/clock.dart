@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class Clock extends StatelessWidget {
@@ -30,36 +31,40 @@ class Clock extends StatelessWidget {
                   SizedBox(), // Empty expanded widget to spread to the first half
             ),
             Expanded(
-              flex: 2, // Takes 2 parts out of 3 parts of the row
-              child: Container(
-                height: double.infinity,
-                alignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Center(
-                          child: Text(
-                            '', // Display any text or content you want here
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                flex: 2,
+                child: RotatedBox(
+                  quarterTurns: isReversed ? 2 : 0,
+                  child: Container(
+                    height: double.infinity,
+                    alignment: Alignment.center,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Center(
+                              child: Text(
+                                '', // Display any text or content you want here
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        CountdownText(
+                          isReversed: isReversed,
+                          seconds: seconds,
+                          overtimeLimit: overtimeLimit,
+                        ),
+                      ],
                     ),
-                    CountdownText(
-                      isReversed: isReversed,
-                      seconds: seconds,
-                      overtimeLimit: overtimeLimit,
-                    ),
-                  ],
+                  ),
+                ) // Takes 2 parts out of 3 parts of the row
+
                 ),
-              ),
-            ),
             Expanded(
               flex: 1,
               child:
@@ -97,17 +102,26 @@ class CountdownText extends StatelessWidget {
 
     final minutes = remainingSeconds ~/ 60;
     remainingSeconds = remainingSeconds % 60;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxFontSize = screenWidth * 0.1;
 
-    return Text(
+    return AutoSizeText(
       isReversed
           ? '${isNegative ? '-' : ''}${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}'
-          : '${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}${isNegative ? '-' : ''}',
+          : '${isNegative ? '-' : ''}${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}',
       textAlign: TextAlign.center,
       style: TextStyle(
-        fontSize: 70.0,
-        fontWeight: FontWeight.bold,
-        color: isNegative ? Colors.black : Colors.black,
+        fontFamily: 'Lato',
+        fontSize: 100.0,
+        fontWeight: FontWeight.w900,
+        color: isNegative
+            ? Color.fromARGB(255, 21, 47, 65)
+            : Color.fromARGB(255, 21, 47, 65),
       ),
+      maxLines: 1,
+      minFontSize: 10, // Specify the minimum font size
+      maxFontSize: 100.0, // Specify the maximum font size
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

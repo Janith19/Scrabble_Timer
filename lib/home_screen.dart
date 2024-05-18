@@ -78,9 +78,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _updatePenaltyScore(int newScore) {
+  void _updatePenaltyScore(int newTime) {
     setState(() {
-      _penaltyscore = newScore;
+      _penaltyscore = newTime;
       _widgetOptions[1] = ScrabbleTimer(
         penaltyScore: _penaltyscore,
         playerTime: _playerTime,
@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Scrabble Timer'),
+        toolbarHeight: 0,
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -122,12 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Timer',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(
+              Icons.settings,
+            ),
             label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).primaryColor,
+        selectedItemColor: Color.fromARGB(255, 21, 47, 65),
         onTap: _onItemTapped,
       ),
     );

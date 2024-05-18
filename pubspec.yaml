@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   meta: ^1.7.0
   provider: ^5.0.0
+  auto_size_text: ^3.0.0
 
 
 
@@ -96,4 +97,12 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-  
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: fonts/Lato-Black.ttf
+        - asset: fonts/Lato-BlackItalic.ttf
+        - asset: fonts/Lato-Light.ttf
+        - asset: fonts/Lato-Regular.ttf
+        - asset: fonts/Lato-Bold.ttf
+        

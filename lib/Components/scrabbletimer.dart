@@ -64,8 +64,9 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
           _timer1Running = false;
         } else {
           _seconds1--;
-          if (_seconds1 < 0 && _seconds1 % 60 == 0) {
+          if (_seconds1 <= 0 && _seconds1 % 60 == 0) {
             _penalty1 += widget.penaltyScore; // Increment penalty per minute
+            print("Penalty 1: $_penalty1"); // Print penalty value
           }
         }
       });
@@ -85,8 +86,9 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
           _timer2Running = false;
         } else {
           _seconds2--;
-          if (_seconds2 < 0 && _seconds2 % 60 == 0) {
+          if (_seconds2 <= 0 && _seconds2 % 60 == 0) {
             _penalty2 += widget.penaltyScore; // Increment penalty per minute
+            print("Penalty 2: $_penalty2"); // Print penalty value
           }
         }
       });
@@ -94,12 +96,6 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
     _timer1?.cancel();
     _timer1Running = false;
     setState(() {});
-  }
-
-  void _updateOvertimeLimit(int limit) {
-    setState(() {
-      widget.overtimeLimit = limit;
-    });
   }
 
   void _pauseTimers() {
@@ -140,6 +136,7 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 21, 47, 65),
       body: Center(
         child: Column(
           children: <Widget>[
@@ -176,14 +173,19 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  _seconds1 <= -widget.overtimeLimit * 60
-                                      ? 'Disqualified'
-                                      : 'Penalty: $_penalty1',
-                                  style: TextStyle(fontSize: 25),
-                                ),
-                              ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: RotatedBox(
+                                    quarterTurns: true ? 2 : 0,
+                                    child: Text(
+                                      _seconds2 == -widget.overtimeLimit * 60
+                                          ? 'Disqualified'
+                                          : 'Penalty: $_penalty1',
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )),
                             ],
                           ),
                         ),
@@ -224,14 +226,19 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  _seconds2 <= -widget.overtimeLimit * 60
-                                      ? 'Disqualified'
-                                      : 'Penalty: $_penalty2',
-                                  style: TextStyle(fontSize: 25),
-                                ),
-                              ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: RotatedBox(
+                                    quarterTurns: false ? 2 : 0,
+                                    child: Text(
+                                      _seconds2 == -widget.overtimeLimit * 60
+                                          ? 'Disqualified'
+                                          : 'Penalty: $_penalty2',
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )),
                               Expanded(
                                 child: Clock(
                                   isReversed: false,

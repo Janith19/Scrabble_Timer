@@ -181,7 +181,7 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                                   child: RotatedBox(
                                     quarterTurns: true ? 2 : 0,
                                     child: Text(
-                                      _seconds2 == -widget.overtimeLimit * 60
+                                      _seconds1 == -widget.overtimeLimit * 60
                                           ? 'Disqualified'
                                           : 'Penalty: $_penalty1',
                                       style: TextStyle(

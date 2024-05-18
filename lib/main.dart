@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
           fontFamily: 'Lato',
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.green,
           textSelectionTheme: TextSelectionThemeData(
             cursorColor: Color.fromARGB(
                 255, 21, 47, 65), // Set your desired cursor color here
@@ -36,10 +36,32 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => SplashScreen(),
+          '/': (context) =>
+              SplashScreenWithDelay(), // Use SplashScreenWithDelay
           '/home': (context) => HomeScreen(),
         },
       ),
     );
+  }
+}
+
+class SplashScreenWithDelay extends StatefulWidget {
+  @override
+  _SplashScreenWithDelayState createState() => _SplashScreenWithDelayState();
+}
+
+class _SplashScreenWithDelayState extends State<SplashScreenWithDelay> {
+  @override
+  void initState() {
+    super.initState();
+    // Delay navigation to the home screen after 3 seconds (adjust as needed)
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushReplacementNamed(context, '/home');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SplashScreen();
   }
 }

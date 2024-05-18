@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scrabble_timer/Components/scrabbletimer.dart';
-import 'about_screen.dart'; // Import your AboutScreen widget
-import 'settings_screen.dart'; // Import your SettingsScreen widget
-
-// In home_screen.dart
+import 'about_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,26 +13,26 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 1; // Set initial index to 1 (for Timer)
   int _playerTime = 25;
   int _overtimeLimit = 5;
-  int _penaltyscore = 10; // Default player time in minutes
+  int _penaltyscore = 10;
 
-  late List<Widget> _widgetOptions; // Declare _widgetOptions
+  late List<Widget> _widgetOptions;
 
   @override
   void initState() {
     super.initState();
-
     _widgetOptions = [
-      AboutScreen(), // Your AboutScreen widget
+      AboutScreen(),
       ScrabbleTimer(
+        key: UniqueKey(),
         playerTime: _playerTime,
         overtimeLimit: _overtimeLimit,
-        penaltyScore: _penaltyscore, // Pass the overtime limit value
-      ), // Your ScrabbleTimer widget
+        penaltyScore: _penaltyscore,
+      ),
       SettingsScreen(
         onPlayerTimeChanged: _updatePlayerTime,
         onOvertimeLimitChanged: _updateOvertimeLimit,
         onPenaltyTimeChanged: _updatePenaltyScore,
-      ), // Your SettingsScreen widget
+      ),
     ];
   }
 
@@ -42,12 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _playerTime = newTime;
       _widgetOptions[1] = ScrabbleTimer(
-        penaltyScore: _penaltyscore,
+        key: UniqueKey(),
         playerTime: _playerTime,
         overtimeLimit: _overtimeLimit,
+        penaltyScore: _penaltyscore,
       );
     });
-    // Show toast message for player time change
     Fluttertoast.showToast(
       msg: "Player time updated to $_playerTime minutes",
       toastLength: Toast.LENGTH_SHORT,
@@ -62,12 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _overtimeLimit = newTime;
       _widgetOptions[1] = ScrabbleTimer(
-        penaltyScore: _penaltyscore,
+        key: UniqueKey(),
         playerTime: _playerTime,
         overtimeLimit: _overtimeLimit,
+        penaltyScore: _penaltyscore,
       );
     });
-    // Show toast message for overtime limit change
     Fluttertoast.showToast(
       msg: "Overtime limit updated to $_overtimeLimit minutes",
       toastLength: Toast.LENGTH_SHORT,
@@ -82,12 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _penaltyscore = newTime;
       _widgetOptions[1] = ScrabbleTimer(
-        penaltyScore: _penaltyscore,
+        key: UniqueKey(),
         playerTime: _playerTime,
         overtimeLimit: _overtimeLimit,
+        penaltyScore: _penaltyscore,
       );
     });
-    // Show toast message for overtime limit change
     Fluttertoast.showToast(
       msg: "Penalty Score per minute updated to $_penaltyscore points",
       toastLength: Toast.LENGTH_SHORT,
@@ -122,9 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Timer',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.settings,
-            ),
+            icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],

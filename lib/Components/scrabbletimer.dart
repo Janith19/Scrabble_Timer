@@ -55,47 +55,51 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
   }
 
   void _startTimer1() {
-    _timer1?.cancel();
-    _timer1Running = true;
-    _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_seconds1 <= -widget.overtimeLimit * 60) {
-          _timer1?.cancel();
-          _timer1Running = false;
-        } else {
-          _seconds1--;
-          if (_seconds1 <= 0 && _seconds1 % 60 == 0) {
-            _penalty1 += widget.penaltyScore; // Increment penalty per minute
-            print("Penalty 1: $_penalty1"); // Print penalty value
+    if (!_timer1Running) {
+      _timer1?.cancel();
+      _timer1Running = true;
+      _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
+        setState(() {
+          if (_seconds1 <= -widget.overtimeLimit * 60) {
+            _timer1?.cancel();
+            _timer1Running = false;
+          } else {
+            _seconds1--;
+            if (_seconds1 <= 0 && _seconds1 % 60 == 0) {
+              _penalty1 += widget.penaltyScore; // Increment penalty per minute
+              print("Penalty 1: $_penalty1"); // Print penalty value
+            }
           }
-        }
+        });
       });
-    });
-    _timer2?.cancel();
-    _timer2Running = false;
-    setState(() {});
+      _timer2?.cancel();
+      _timer2Running = false;
+      setState(() {});
+    }
   }
 
   void _startTimer2() {
-    _timer2?.cancel();
-    _timer2Running = true;
-    _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_seconds2 <= -widget.overtimeLimit * 60) {
-          _timer2?.cancel();
-          _timer2Running = false;
-        } else {
-          _seconds2--;
-          if (_seconds2 <= 0 && _seconds2 % 60 == 0) {
-            _penalty2 += widget.penaltyScore; // Increment penalty per minute
-            print("Penalty 2: $_penalty2"); // Print penalty value
+    if (!_timer2Running) {
+      _timer2?.cancel();
+      _timer2Running = true;
+      _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
+        setState(() {
+          if (_seconds2 <= -widget.overtimeLimit * 60) {
+            _timer2?.cancel();
+            _timer2Running = false;
+          } else {
+            _seconds2--;
+            if (_seconds2 <= 0 && _seconds2 % 60 == 0) {
+              _penalty2 += widget.penaltyScore; // Increment penalty per minute
+              print("Penalty 2: $_penalty2"); // Print penalty value
+            }
           }
-        }
+        });
       });
-    });
-    _timer1?.cancel();
-    _timer1Running = false;
-    setState(() {});
+      _timer1?.cancel();
+      _timer1Running = false;
+      setState(() {});
+    }
   }
 
   void _pauseTimers() {
@@ -157,7 +161,7 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                         child: Card(
                           color: _timer1Running && _seconds1 > 0
                               ? Colors.orange
-                              : _seconds1 < 0 && _timer1Running
+                              : _seconds1 <= 0 && _timer1Running
                                   ? Colors.red
                                   : null,
                           elevation: 4,
@@ -219,7 +223,7 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                         child: Card(
                           color: _timer2Running && _seconds2 > 0
                               ? Colors.orange
-                              : _seconds2 < 0 && _timer2Running
+                              : _seconds2 <= 0 && _timer2Running
                                   ? Colors.red
                                   : null,
                           elevation: 4,

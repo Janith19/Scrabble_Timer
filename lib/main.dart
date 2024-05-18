@@ -1,34 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scrabble_timer/Models/timerstate.dart';
 
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+import 'splashscreen.dart';
+import 'home_screen.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('About'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Replace this with your actual logo image
-            Image.asset(
-              'assets/Logo.png',
-              // Adjust height as needed
+    return ChangeNotifierProvider(
+      create: (context) => TimerState(),
+      child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'Lato',
+          primarySwatch: Colors.blue,
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Color.fromARGB(
+                255, 21, 47, 65), // Set your desired cursor color here
+            selectionColor: Color.fromARGB(
+                255, 21, 47, 65), // Set your desired selection color here
+            selectionHandleColor: Color.fromARGB(255, 21, 47,
+                65), // Set your desired selection handle color here
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Color.fromARGB(
+                      255, 21, 47, 65)), // Set your desired border color here
             ),
-            SizedBox(height: 20),
-            Text(
-              'This app was developed by UOK',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+          ),
         ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => SplashScreen(),
+          '/home': (context) => HomeScreen(),
+        },
       ),
     );
   }

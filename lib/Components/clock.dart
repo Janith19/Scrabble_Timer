@@ -102,8 +102,8 @@ class CountdownText extends StatelessWidget {
 
     final minutes = remainingSeconds ~/ 60;
     remainingSeconds = remainingSeconds % 60;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final maxFontSize = screenWidth * 0.1;
+    //final screenWidth = MediaQuery.of(context).size.width;
+    //final maxFontSize = screenWidth * 0.1;
 
     return AutoSizeText(
       isReversed

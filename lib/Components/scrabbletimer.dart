@@ -6,7 +6,7 @@ import 'control_buttons.dart';
 class ScrabbleTimer extends StatefulWidget {
   final int playerTime;
   int overtimeLimit;
-  int penaltyScore; // Remove the final keyword
+  int penaltyScore;
 
   ScrabbleTimer({
     Key? key,
@@ -25,9 +25,11 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
   late int _playerTime;
   late int _seconds1;
   late int _seconds2;
-  int _penalty1 = 0; // Placeholder value for penalty on timer 1
-  int _penalty2 = 0; // Placeholder value for penalty on timer 2
+  int _penalty1 = 0;
+  int _penalty2 = 0;
   bool _paused = false;
+  bool _timer1Running = false;
+  bool _timer2Running = false;
 
   @override
   void initState() {
@@ -52,52 +54,59 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
     });
   }
 
+  void _startTimer1() {
+    _timer1?.cancel();
+    _timer1Running = true;
+    _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_seconds1 <= -widget.overtimeLimit * 60) {
+          _timer1?.cancel();
+          _timer1Running = false;
+        } else {
+          _seconds1--;
+          if (_seconds1 < 0 && _seconds1 % 60 == 0) {
+            _penalty1 += widget.penaltyScore; // Increment penalty per minute
+          }
+        }
+      });
+    });
+    _timer2?.cancel();
+    _timer2Running = false;
+    setState(() {});
+  }
+
+  void _startTimer2() {
+    _timer2?.cancel();
+    _timer2Running = true;
+    _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_seconds2 <= -widget.overtimeLimit * 60) {
+          _timer2?.cancel();
+          _timer2Running = false;
+        } else {
+          _seconds2--;
+          if (_seconds2 < 0 && _seconds2 % 60 == 0) {
+            _penalty2 += widget.penaltyScore; // Increment penalty per minute
+          }
+        }
+      });
+    });
+    _timer1?.cancel();
+    _timer1Running = false;
+    setState(() {});
+  }
+
   void _updateOvertimeLimit(int limit) {
     setState(() {
       widget.overtimeLimit = limit;
     });
   }
 
-  void _startTimer1() {
-    _timer1?.cancel();
-    _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_seconds1 <= -widget.overtimeLimit * 60) {
-          _timer1?.cancel();
-        } else {
-          _seconds1--;
-          if (_seconds1 < 0) {
-            if (_seconds1 % 60 == 0) {
-              _penalty1 += widget.penaltyScore;
-            }
-            // Increment penalty score per minute
-          }
-        }
-      });
-    });
-    _timer2?.cancel();
-  }
-
-  void _startTimer2() {
-    _timer2?.cancel();
-    _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_seconds2 <= -widget.overtimeLimit * 60) {
-          _timer2?.cancel();
-        } else {
-          _seconds2--;
-          if (_seconds2 % 60 == 0) {
-            _penalty2 += widget.penaltyScore;
-          }
-        }
-      });
-    });
-    _timer1?.cancel();
-  }
-
   void _pauseTimers() {
     _timer1?.cancel();
     _timer2?.cancel();
+    _timer1Running = false;
+    _timer2Running = false;
     setState(() {
       _paused = true;
     });
@@ -106,6 +115,8 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
   void _resetTimers() {
     _timer1?.cancel();
     _timer2?.cancel();
+    _timer1Running = false;
+    _timer2Running = false;
     setState(() {
       _seconds1 = _playerTime * 60;
       _seconds2 = _playerTime * 60;
@@ -141,29 +152,39 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                     _startTimer2();
                   }
                 },
-                child: Column(
+                child: Row(
                   children: [
                     Expanded(
-                      child: Clock(
-                        isReversed: true,
-                        seconds: _seconds1,
-                        onStart: _startTimer2, // Pass the onStart function
-                        overtimeLimit: widget.overtimeLimit,
-                        penalty: _penalty1,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          right: 20.0, top: 50, bottom: 0),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: RotatedBox(
-                          quarterTurns: true ? 2 : 0,
-                          child: Text(
-                            _seconds1 == -widget.overtimeLimit * 60
-                                ? 'Disqualified'
-                                : 'Penalty: $_penalty1',
-                            style: TextStyle(fontSize: 30),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Card(
+                          color: _timer1Running && _seconds1 > 0
+                              ? Colors.orange
+                              : _seconds1 < 0 && _timer1Running
+                                  ? Colors.red
+                                  : null,
+                          elevation: 4,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Clock(
+                                  isReversed: true,
+                                  seconds: _seconds1,
+                                  onStart: _startTimer2,
+                                  overtimeLimit: widget.overtimeLimit,
+                                  penalty: _penalty1,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  _seconds1 <= -widget.overtimeLimit * 60
+                                      ? 'Disqualified'
+                                      : 'Penalty: $_penalty1',
+                                  style: TextStyle(fontSize: 25),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -172,12 +193,13 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                 ),
               ),
             ),
-            Expanded(
-              child: ControlButtons(
-                onPause: _pauseTimers,
-                onReset: _resetTimers,
-              ),
+            SizedBox(height: 0),
+            ControlButtons(
+              onPause: _pauseTimers,
+              onReset: _resetTimers,
+              iconSize: 60, // Increase the icon size
             ),
+            SizedBox(height: 0),
             Expanded(
               child: InkWell(
                 onTap: () {
@@ -187,27 +209,41 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                     _startTimer1();
                   }
                 },
-                child: Column(
+                child: Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, top: 0.0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          _seconds2 == -widget.overtimeLimit * 60
-                              ? 'Disqualified'
-                              : 'Penalty: $_penalty2',
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      ),
-                    ),
                     Expanded(
-                      child: Clock(
-                        isReversed: false,
-                        seconds: _seconds2,
-                        onStart: _startTimer1, // Pass the onStart function
-                        overtimeLimit: widget.overtimeLimit,
-                        penalty: _penalty2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Card(
+                          color: _timer2Running && _seconds2 > 0
+                              ? Colors.orange
+                              : _seconds2 < 0 && _timer2Running
+                                  ? Colors.red
+                                  : null,
+                          elevation: 4,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  _seconds2 <= -widget.overtimeLimit * 60
+                                      ? 'Disqualified'
+                                      : 'Penalty: $_penalty2',
+                                  style: TextStyle(fontSize: 25),
+                                ),
+                              ),
+                              Expanded(
+                                child: Clock(
+                                  isReversed: false,
+                                  seconds: _seconds2,
+                                  onStart: _startTimer1,
+                                  overtimeLimit: widget.overtimeLimit,
+                                  penalty: _penalty2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],

@@ -41,7 +41,7 @@ class Clock extends StatelessWidget {
                         color: Colors.transparent,
                         child: Center(
                           child: Text(
-                            'Timer', // Display any text or content you want here
+                            '', // Display any text or content you want here
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -104,9 +104,9 @@ class CountdownText extends StatelessWidget {
           : '${minutes.abs()}:${remainingSeconds.abs().toString().padLeft(2, '0')}${isNegative ? '-' : ''}',
       textAlign: TextAlign.center,
       style: TextStyle(
-        fontSize: 50.0,
+        fontSize: 70.0,
         fontWeight: FontWeight.bold,
-        color: isNegative ? Colors.red : Colors.black,
+        color: isNegative ? Colors.black : Colors.black,
       ),
     );
   }

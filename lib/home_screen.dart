@@ -42,7 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _playerTime = newTime;
       _widgetOptions[1] = ScrabbleTimer(
+        penaltyScore: _penaltyscore,
         playerTime: _playerTime,
+        overtimeLimit: _overtimeLimit,
       );
     });
     // Show toast message for player time change
@@ -60,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _overtimeLimit = newTime;
       _widgetOptions[1] = ScrabbleTimer(
+        penaltyScore: _penaltyscore,
         playerTime: _playerTime,
         overtimeLimit: _overtimeLimit,
       );
@@ -80,6 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _penaltyscore = newScore;
       _widgetOptions[1] = ScrabbleTimer(
         penaltyScore: _penaltyscore,
+        playerTime: _playerTime,
+        overtimeLimit: _overtimeLimit,
       );
     });
     // Show toast message for overtime limit change

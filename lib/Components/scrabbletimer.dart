@@ -55,51 +55,47 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
   }
 
   void _startTimer1() {
-    if (!_timer1Running) {
-      _timer1?.cancel();
-      _timer1Running = true;
-      _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
-        setState(() {
-          if (_seconds1 <= -widget.overtimeLimit * 60) {
-            _timer1?.cancel();
-            _timer1Running = false;
-          } else {
-            _seconds1--;
-            if (_seconds1 <= 0 && _seconds1 % 60 == 0) {
-              _penalty1 += widget.penaltyScore; // Increment penalty per minute
-              print("Penalty 1: $_penalty1"); // Print penalty value
-            }
+    _timer1?.cancel();
+    _timer1Running = true;
+    _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_seconds1 <= -widget.overtimeLimit * 60) {
+          _timer1?.cancel();
+          _timer1Running = false;
+        } else {
+          _seconds1--;
+          if (_seconds1 <= 0 && _seconds1 % 60 == 0) {
+            _penalty1 += widget.penaltyScore; // Increment penalty per minute
+            print("Penalty 1: $_penalty1"); // Print penalty value
           }
-        });
+        }
       });
-      _timer2?.cancel();
-      _timer2Running = false;
-      setState(() {});
-    }
+    });
+    _timer2?.cancel();
+    _timer2Running = false;
+    setState(() {});
   }
 
   void _startTimer2() {
-    if (!_timer2Running) {
-      _timer2?.cancel();
-      _timer2Running = true;
-      _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
-        setState(() {
-          if (_seconds2 <= -widget.overtimeLimit * 60) {
-            _timer2?.cancel();
-            _timer2Running = false;
-          } else {
-            _seconds2--;
-            if (_seconds2 <= 0 && _seconds2 % 60 == 0) {
-              _penalty2 += widget.penaltyScore; // Increment penalty per minute
-              print("Penalty 2: $_penalty2"); // Print penalty value
-            }
+    _timer2?.cancel();
+    _timer2Running = true;
+    _timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_seconds2 <= -widget.overtimeLimit * 60) {
+          _timer2?.cancel();
+          _timer2Running = false;
+        } else {
+          _seconds2--;
+          if (_seconds2 <= 0 && _seconds2 % 60 == 0) {
+            _penalty2 += widget.penaltyScore; // Increment penalty per minute
+            print("Penalty 2: $_penalty2"); // Print penalty value
           }
-        });
+        }
       });
-      _timer1?.cancel();
-      _timer1Running = false;
-      setState(() {});
-    }
+    });
+    _timer1?.cancel();
+    _timer1Running = false;
+    setState(() {});
   }
 
   void _pauseTimers() {
@@ -124,6 +120,47 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
       _penalty2 = 0;
       _paused = false;
     });
+  }
+
+  Future<void> _showResetConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap a button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Reset'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  'Are you sure you want to reset the timer?',
+                  style: TextStyle(color: Color.fromARGB(255, 21, 47, 65)),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Color.fromARGB(255, 21, 47, 65)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Reset',
+                  style: TextStyle(color: Color.fromARGB(255, 21, 47, 65))),
+              onPressed: () {
+                _resetTimers();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _resumeTimers() {
@@ -181,7 +218,7 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
                                   child: RotatedBox(
                                     quarterTurns: true ? 2 : 0,
                                     child: Text(
-                                      _seconds1 == -widget.overtimeLimit * 60
+                                      _seconds2 == -widget.overtimeLimit * 60
                                           ? 'Disqualified'
                                           : 'Penalty: $_penalty1',
                                       style: TextStyle(
@@ -202,7 +239,8 @@ class _ScrabbleTimerState extends State<ScrabbleTimer> {
             SizedBox(height: 0),
             ControlButtons(
               onPause: _pauseTimers,
-              onReset: _resetTimers,
+              onReset: () =>
+                  _showResetConfirmationDialog(), // Show confirmation dialog
               iconSize: 60, // Increase the icon size
             ),
             SizedBox(height: 0),
